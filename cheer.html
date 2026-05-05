@@ -1,0 +1,1842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Cheer Card by Run Local — Concept Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&family=Caveat:wght@400..700&family=Special+Elite&family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&display=swap" rel="stylesheet">
+<style>
+  /* ============ PALETTE ============ */
+  :root {
+    /* shared with hunt for nav continuity */
+    --ink:           #1a1410;
+    --ink-deep:      #0c0805;
+    --cream:         #f3e9d2;
+    --cream-light:   #faf3e0;
+    --sepia:         #8b6f47;
+    --sepia-deep:    #5e4a30;
+    --brass:         #c9a961;
+    --brass-bright:  #e8c878;
+
+    /* cheer card palette */
+    --paper:         #faf3e0;
+    --polaroid:      #fffefb;
+    --polaroid-edge: #f0ebde;
+    --slate:         #1f2933;
+    --slate-soft:    #4a5562;
+    --slate-mute:    #8492a3;
+    --ocean:         #0f2847;
+    --ocean-soft:    #1e3d65;
+    --coral:         #ff6b4a;
+    --coral-deep:    #e54a2c;
+    --sunset:        #ffa566;
+    --soft-pink:     #ffd6c2;
+    --emerald:       #2e7d5b;
+    --lemon:         #fae178;
+    --peri:          #7e8eff;
+
+    --display: 'Bricolage Grotesque', system-ui, sans-serif;
+    --hand:    'Caveat', cursive;
+    --type:    'Special Elite', 'Courier New', monospace;
+    --brand:   'Fraunces', serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--ink-deep);
+    color: var(--cream);
+    font-family: var(--display);
+    font-size: 16px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  a { text-decoration: none; color: inherit; }
+  ::selection { background: var(--coral); color: white; }
+  [hidden] { display: none !important; }
+
+  /* atmosphere overlay (matches hunt for continuity) */
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 1000;
+    opacity: 0.12; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ============ TOPBAR (identical pattern to hunt) ============ */
+  .topbar {
+    position: relative; z-index: 10;
+    display: grid; grid-template-columns: 1fr auto 1fr;
+    align-items: center; gap: 24px;
+    padding: 18px 32px;
+    border-bottom: 1px solid rgba(201,169,97,0.18);
+    background: linear-gradient(180deg, rgba(0,0,0,0.6), transparent);
+  }
+  .brand {
+    display: flex; align-items: center; gap: 14px;
+    font-family: var(--type); font-size: 11px;
+    letter-spacing: 0.22em; text-transform: uppercase;
+    color: var(--brass);
+  }
+  .brand-seal {
+    width: 32px; height: 32px;
+    background: radial-gradient(circle at 30% 30%, var(--coral), var(--coral-deep) 60%, var(--ink-deep));
+    border-radius: 50%;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.5), 0 2px 6px rgba(0,0,0,0.4);
+    display: grid; place-items: center;
+    color: white; font-family: var(--brand); font-style: italic;
+    font-size: 14px; font-weight: 700;
+    transform: rotate(-8deg);
+  }
+  .topbar-center {
+    text-align: center; font-family: var(--brand);
+    font-style: italic; font-weight: 300;
+    font-size: 14px; color: var(--sepia);
+    letter-spacing: 0.04em;
+  }
+  .topbar-center b { color: var(--brass-bright); font-weight: 500; font-style: normal; }
+  .phase {
+    justify-self: end;
+    display: inline-flex;
+    border: 1px solid rgba(201,169,97,0.25);
+    border-radius: 999px;
+    background: rgba(0,0,0,0.4);
+    padding: 4px;
+    font-family: var(--type);
+    font-size: 10px; letter-spacing: 0.16em; text-transform: uppercase;
+  }
+  .phase button {
+    padding: 8px 14px; border-radius: 999px;
+    color: var(--sepia); transition: all 0.3s ease;
+  }
+  .phase button:hover { color: var(--cream); }
+  .phase button.active {
+    background: linear-gradient(180deg, var(--coral) 0%, var(--coral-deep) 100%);
+    color: white;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
+  }
+
+  /* ============ CONCEPT NAV ============ */
+  .concept-nav {
+    position: relative; z-index: 9;
+    display: grid; grid-template-columns: auto 1fr 1fr;
+    gap: 12px; align-items: stretch;
+    padding: 14px 32px;
+    border-bottom: 1px solid rgba(201,169,97,0.1);
+    background: rgba(0,0,0,0.3);
+  }
+  .concept-nav-label {
+    font-family: var(--type); font-size: 9.5px;
+    color: var(--sepia); letter-spacing: 0.25em;
+    text-transform: uppercase;
+    align-self: center;
+    padding-right: 14px;
+    border-right: 1px solid rgba(201,169,97,0.18);
+  }
+  .concept-link {
+    display: grid; grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    transition: all 0.3s;
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .concept-link:hover {
+    background: rgba(255,107,74,0.06);
+    border-color: rgba(255,107,74,0.18);
+  }
+  .concept-link.active {
+    background: rgba(255,107,74,0.1);
+    border-color: rgba(255,107,74,0.35);
+  }
+  .concept-num {
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-family: var(--brand); font-style: italic;
+    font-weight: 600; font-size: 24px;
+    color: var(--brass);
+    letter-spacing: -0.02em;
+  }
+  .concept-link.active .concept-num { color: var(--coral); }
+  .concept-name {
+    font-family: var(--brand); font-style: italic;
+    font-weight: 500; font-size: 16px;
+    color: var(--cream-light);
+    line-height: 1.1;
+  }
+  .concept-tag {
+    font-family: var(--type); font-size: 9px;
+    color: var(--sepia); letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  .concept-link.active .concept-tag { color: var(--coral); }
+  @media (max-width: 800px) {
+    .concept-nav { grid-template-columns: 1fr; padding: 10px 16px; }
+    .concept-nav-label { border-right: none; padding-right: 0; }
+  }
+
+  /* ============ MAIN BACKGROUND ============ */
+  .shell {
+    position: relative; min-height: 100vh;
+    background:
+      radial-gradient(ellipse at top, rgba(255,107,74,0.18) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 30%, rgba(255,165,102,0.12) 0%, transparent 55%),
+      linear-gradient(180deg, #0c0805 0%, #1a1410 60%, #2a1a14 100%);
+  }
+
+  /* ============ STAGE GRID ============ */
+  .stage {
+    display: grid;
+    grid-template-columns: minmax(360px, 1fr) minmax(440px, 500px);
+    gap: 56px;
+    padding: 48px 64px 80px;
+    max-width: 1400px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  @media (max-width: 1024px) {
+    .stage { grid-template-columns: 1fr; padding: 32px; }
+  }
+
+  /* ============ DEVICE COLUMN ============ */
+  .device-col {
+    display: flex; flex-direction: column; align-items: center;
+    gap: 28px; position: sticky; top: 24px;
+  }
+
+  .iphone {
+    position: relative;
+    width: 360px; height: 740px;
+    border-radius: 52px;
+    background: linear-gradient(145deg, #1a1410, #050302);
+    padding: 14px;
+    box-shadow:
+      0 0 0 2px #2a221a,
+      0 0 0 3px #444,
+      0 30px 60px rgba(0,0,0,0.6),
+      0 60px 100px rgba(255,107,74,0.18),
+      inset 0 0 30px rgba(0,0,0,0.5);
+  }
+  .iphone::before {
+    content: ''; position: absolute;
+    top: 18px; left: 50%; transform: translateX(-50%);
+    width: 110px; height: 30px;
+    background: #000;
+    border-radius: 0 0 18px 18px;
+    z-index: 5;
+  }
+  .iphone::after {
+    content: ''; position: absolute;
+    right: -3px; top: 180px;
+    width: 3px; height: 60px;
+    background: #2a221a; border-radius: 0 2px 2px 0;
+  }
+  .screen {
+    position: relative;
+    width: 100%; height: 100%;
+    border-radius: 40px;
+    background: var(--paper);
+    overflow: hidden;
+  }
+  .screen-stage {
+    position: absolute; inset: 0;
+    transition: opacity 0.5s ease;
+  }
+  .screen-stage:not(.active) {
+    opacity: 0; pointer-events: none;
+  }
+
+  /* ============ POLAROID COMPONENT ============ */
+  .poly {
+    background: var(--polaroid);
+    padding: 10px 10px 28px;
+    border-radius: 4px;
+    box-shadow:
+      0 6px 18px rgba(15,40,71,0.15),
+      0 1px 3px rgba(0,0,0,0.08),
+      inset 0 0 0 1px var(--polaroid-edge);
+    position: relative;
+    transition: transform 0.4s ease;
+  }
+  .poly-photo {
+    aspect-ratio: 1 / 1;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+  /* photo as gradient + abstract shapes (stand-in for real photo) */
+  .poly-photo.ph-finish {
+    background:
+      linear-gradient(180deg, transparent 60%, rgba(255,107,74,0.7) 100%),
+      radial-gradient(ellipse at 30% 70%, var(--lemon) 0%, transparent 50%),
+      linear-gradient(160deg, var(--coral) 0%, var(--sunset) 50%, var(--coral-deep) 100%);
+  }
+  .poly-photo.ph-finish::after {
+    content: ''; position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M 20 75 Q 30 60 35 70 L 38 85 L 32 85 Z M 50 70 Q 58 50 62 65 L 65 85 L 56 85 Z M 75 72 Q 82 55 86 68 L 89 85 L 80 85 Z' fill='rgba(15,40,71,0.4)'/%3E%3Cpath d='M 0 85 L 100 85 L 100 86 L 0 86 Z' fill='rgba(15,40,71,0.6)'/%3E%3C/svg%3E");
+    background-size: cover;
+  }
+  .poly-photo.ph-mom {
+    background:
+      radial-gradient(circle at 50% 35%, var(--soft-pink) 0%, var(--coral) 50%, var(--coral-deep) 100%);
+  }
+  .poly-photo.ph-mom::after {
+    content: ''; position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='38' r='14' fill='rgba(255,254,251,0.85)'/%3E%3Cpath d='M 30 100 Q 30 65 50 65 Q 70 65 70 100 Z' fill='rgba(255,254,251,0.85)'/%3E%3C/svg%3E");
+  }
+  .poly-photo.ph-friends {
+    background:
+      linear-gradient(135deg, var(--peri) 0%, var(--ocean) 100%);
+  }
+  .poly-photo.ph-friends::after {
+    content: ''; position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='30' cy='42' r='10' fill='rgba(250,225,120,0.9)'/%3E%3Cpath d='M 16 100 Q 16 70 30 70 Q 44 70 44 100 Z' fill='rgba(250,225,120,0.9)'/%3E%3Ccircle cx='62' cy='38' r='12' fill='rgba(255,254,251,0.9)'/%3E%3Cpath d='M 46 100 Q 46 65 62 65 Q 78 65 78 100 Z' fill='rgba(255,254,251,0.9)'/%3E%3C/svg%3E");
+  }
+  .poly-photo.ph-dog {
+    background:
+      radial-gradient(circle at 60% 50%, var(--lemon) 0%, var(--sunset) 100%);
+  }
+  .poly-photo.ph-dog::after {
+    content: ''; position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cellipse cx='55' cy='62' rx='22' ry='18' fill='rgba(120,80,40,0.85)'/%3E%3Ccircle cx='55' cy='40' r='14' fill='rgba(120,80,40,0.85)'/%3E%3Ccircle cx='44' cy='38' r='3' fill='%231a1410'/%3E%3Ccircle cx='66' cy='38' r='3' fill='%231a1410'/%3E%3Cpath d='M 38 28 L 30 18 L 35 32 Z M 72 28 L 80 18 L 75 32 Z' fill='rgba(80,50,20,0.9)'/%3E%3C/svg%3E");
+  }
+  .poly-photo.ph-coast {
+    background:
+      linear-gradient(180deg, var(--peri) 0%, var(--coral) 60%, var(--lemon) 100%);
+  }
+  .poly-photo.ph-coast::after {
+    content: ''; position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M 0 70 Q 25 55 50 65 Q 75 75 100 60 L 100 100 L 0 100 Z' fill='rgba(15,40,71,0.5)'/%3E%3C/svg%3E");
+    background-size: 100% 100%;
+  }
+  .poly-photo.ph-trail {
+    background:
+      linear-gradient(160deg, var(--emerald) 0%, var(--ocean) 100%);
+  }
+  .poly-photo.ph-trail::after {
+    content: ''; position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M 50 100 Q 45 60 55 40 Q 65 20 50 0' stroke='rgba(255,254,251,0.6)' stroke-width='3' fill='none'/%3E%3Ccircle cx='50' cy='95' r='4' fill='rgba(255,107,74,0.9)'/%3E%3C/svg%3E");
+  }
+  .poly-photo.ph-cake {
+    background: linear-gradient(135deg, var(--soft-pink), var(--peri));
+  }
+  .poly-photo.ph-cake::after {
+    content: ''; position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect x='30' y='60' width='40' height='25' fill='rgba(255,254,251,0.9)'/%3E%3Crect x='35' y='52' width='30' height='10' fill='rgba(250,225,120,0.95)'/%3E%3Cpath d='M 50 52 L 50 42' stroke='rgba(255,107,74,1)' stroke-width='3'/%3E%3C/svg%3E");
+  }
+  .poly-photo.ph-empty {
+    background: linear-gradient(135deg, #e9e3d2, #d8d0bd);
+    display: grid; place-items: center;
+    color: var(--slate-mute);
+  }
+  .poly-msg {
+    font-family: var(--hand);
+    font-size: 18px;
+    color: var(--ink);
+    text-align: center;
+    margin-top: 10px;
+    line-height: 1.15;
+    transform: rotate(-1deg);
+    padding: 0 4px;
+  }
+  .poly-meta {
+    position: absolute;
+    bottom: 6px; left: 0; right: 0;
+    text-align: center;
+    font-family: var(--type); font-size: 7.5px;
+    color: var(--slate-mute); letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+
+  /* washi tape decoration */
+  .washi {
+    position: absolute;
+    height: 18px;
+    background: linear-gradient(90deg, transparent, rgba(255,165,102,0.7) 30%, rgba(255,165,102,0.7) 70%, transparent);
+    transform: rotate(-4deg);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  /* ============ SCREEN: LANDING ============ */
+  .scr-landing {
+    background:
+      radial-gradient(circle at 70% 90%, var(--soft-pink) 0%, transparent 60%),
+      linear-gradient(180deg, var(--paper) 0%, #fdebd5 100%);
+    padding: 56px 24px 24px;
+    display: flex; flex-direction: column;
+    color: var(--slate);
+  }
+  .land-hero {
+    aspect-ratio: 4 / 3;
+    border-radius: 18px;
+    background:
+      linear-gradient(180deg, transparent 50%, rgba(15,40,71,0.5) 100%),
+      radial-gradient(ellipse at 30% 70%, var(--lemon) 0%, transparent 60%),
+      linear-gradient(155deg, var(--coral) 0%, var(--sunset) 60%, var(--coral-deep) 100%);
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 22px;
+    box-shadow: 0 12px 28px rgba(255,107,74,0.25);
+  }
+  .land-hero::before {
+    /* runner silhouette */
+    content: ''; position: absolute;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 150' preserveAspectRatio='xMidYMax slice'%3E%3Cg fill='rgba(15,40,71,0.55)'%3E%3Ccircle cx='100' cy='62' r='10'/%3E%3Cpath d='M 92 70 L 90 95 L 78 122 L 84 124 L 95 100 L 100 90 L 105 100 L 116 124 L 122 122 L 110 95 L 108 70 Z'/%3E%3Cpath d='M 88 75 L 75 88 L 80 92 L 92 80 Z M 112 75 L 125 65 L 130 70 L 116 80 Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 50% auto;
+    background-position: center 90%;
+    background-repeat: no-repeat;
+  }
+  .land-hero-sticker {
+    position: absolute;
+    top: 14px; right: 14px;
+    background: var(--polaroid);
+    color: var(--coral-deep);
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-family: var(--type); font-size: 9px;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: rotate(4deg);
+  }
+  .land-hero-card {
+    /* small floating polaroid in corner */
+    position: absolute;
+    bottom: 14px; left: 14px;
+    width: 110px;
+    transform: rotate(-6deg);
+  }
+  .land-hero-card .poly {
+    padding: 5px 5px 16px;
+    box-shadow: 0 8px 16px rgba(15,40,71,0.4);
+  }
+  .land-hero-card .poly-msg { font-size: 14px; margin-top: 4px; }
+  .land-eyebrow {
+    font-family: var(--type); font-size: 9.5px;
+    letter-spacing: 0.3em; color: var(--coral-deep);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .land-title {
+    font-family: var(--display);
+    font-weight: 700; font-size: 36px;
+    color: var(--ocean); line-height: 0.96;
+    letter-spacing: -0.025em;
+    margin-bottom: 12px;
+    font-variation-settings: "opsz" 96;
+  }
+  .land-title em {
+    font-family: var(--hand); font-size: 44px;
+    font-style: normal; font-weight: 700;
+    color: var(--coral);
+    display: inline-block;
+    transform: rotate(-2deg);
+    line-height: 0.9;
+  }
+  .land-sub {
+    font-family: var(--display); font-size: 14px;
+    color: var(--slate-soft);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+  .land-cta {
+    background: linear-gradient(135deg, var(--coral) 0%, var(--coral-deep) 100%);
+    color: white;
+    padding: 16px;
+    border-radius: 999px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 16px;
+    letter-spacing: -0.01em;
+    box-shadow: 0 8px 22px rgba(255,107,74,0.4);
+    transition: all 0.3s;
+    width: 100%;
+  }
+  .land-cta:hover { transform: translateY(-1px); box-shadow: 0 12px 30px rgba(255,107,74,0.55); }
+  .land-foot {
+    margin-top: auto;
+    text-align: center; padding-top: 14px;
+    font-family: var(--type); font-size: 9.5px;
+    color: var(--slate-mute); letter-spacing: 0.2em;
+    text-transform: uppercase;
+  }
+
+  /* ============ SCREEN: COMPOSE ============ */
+  .scr-compose {
+    background: var(--paper);
+    padding: 56px 22px 22px;
+    color: var(--slate);
+    overflow-y: auto;
+    display: flex; flex-direction: column;
+  }
+  .compose-back {
+    align-self: flex-start;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; color: var(--ocean);
+    margin-bottom: 14px;
+  }
+  .compose-step {
+    font-family: var(--type); font-size: 9.5px;
+    letter-spacing: 0.3em; color: var(--coral-deep);
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .compose-h {
+    font-family: var(--display); font-weight: 700;
+    font-size: 24px; color: var(--ocean); line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 18px;
+  }
+  .compose-preview {
+    margin: 0 auto 18px;
+    width: 200px;
+    transform: rotate(-2deg);
+  }
+  .compose-fields {
+    display: flex; flex-direction: column; gap: 12px;
+  }
+  .ck-field {
+    background: white;
+    border-radius: 12px;
+    padding: 12px 14px;
+    border: 1px solid #e6dfd0;
+    transition: all 0.2s;
+  }
+  .ck-field:focus-within, .ck-field.active { border-color: var(--coral); box-shadow: 0 0 0 3px rgba(255,107,74,0.12); }
+  .ck-field-label {
+    display: flex; align-items: center; gap: 6px;
+    font-family: var(--type); font-size: 9.5px;
+    color: var(--slate-mute); letter-spacing: 0.2em;
+    text-transform: uppercase; margin-bottom: 4px;
+  }
+  .ck-field-label::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--coral);
+  }
+  .ck-field input, .ck-field textarea {
+    width: 100%; border: none; background: transparent;
+    font-family: var(--display); font-size: 16px;
+    color: var(--slate); outline: none;
+    font-weight: 500;
+  }
+  .ck-field textarea {
+    font-family: var(--hand); font-size: 22px;
+    color: var(--ink);
+    resize: none;
+    line-height: 1.15;
+    min-height: 38px;
+  }
+  .ck-field input::placeholder, .ck-field textarea::placeholder {
+    color: var(--slate-mute); opacity: 0.6;
+  }
+  .ck-photo-row {
+    display: grid; grid-template-columns: 56px 1fr; gap: 10px; align-items: center;
+  }
+  .ck-photo-thumb {
+    width: 56px; height: 56px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--soft-pink), var(--coral));
+    display: grid; place-items: center;
+    color: white; font-family: var(--display); font-weight: 700;
+    font-size: 22px;
+    box-shadow: 0 4px 10px rgba(255,107,74,0.25);
+  }
+  .ck-photo-row b { font-family: var(--display); font-weight: 600; font-size: 14px; color: var(--ocean); display: block; }
+  .ck-photo-row small { font-family: var(--display); font-size: 12px; color: var(--slate-mute); }
+  .ck-mile-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .ck-mile {
+    padding: 10px 8px;
+    border: 1.5px solid #e6dfd0;
+    border-radius: 10px;
+    background: white;
+    text-align: left;
+    transition: all 0.2s;
+    cursor: pointer;
+  }
+  .ck-mile.selected {
+    border-color: var(--coral);
+    background: linear-gradient(135deg, #fff5ed, #ffe7d8);
+  }
+  .ck-mile small {
+    font-family: var(--type); font-size: 9px;
+    letter-spacing: 0.18em; color: var(--coral-deep);
+    text-transform: uppercase;
+    display: block;
+    font-weight: 700;
+  }
+  .ck-mile b {
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px; color: var(--ocean);
+    display: block;
+    line-height: 1.2; margin-top: 2px;
+  }
+  .ck-mile span {
+    font-family: var(--display); font-size: 11px;
+    color: var(--slate-mute);
+  }
+  .compose-send {
+    margin-top: 16px;
+    background: linear-gradient(135deg, var(--coral) 0%, var(--coral-deep) 100%);
+    color: white;
+    padding: 14px;
+    border-radius: 999px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 15px;
+    letter-spacing: -0.01em;
+    box-shadow: 0 6px 18px rgba(255,107,74,0.35);
+    transition: all 0.3s;
+  }
+  .compose-send:hover { transform: translateY(-1px); }
+
+  /* ============ SCREEN: SENT ============ */
+  .scr-sent {
+    background:
+      radial-gradient(circle at 50% 80%, rgba(255,165,102,0.2) 0%, transparent 60%),
+      linear-gradient(180deg, var(--paper) 0%, #fce6cc 100%);
+    padding: 70px 22px 22px;
+    display: flex; flex-direction: column;
+    align-items: center; text-align: center;
+    color: var(--slate);
+    position: relative;
+    overflow: hidden;
+  }
+  /* confetti */
+  .confetti {
+    position: absolute; inset: 0;
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 320 600'%3E%3Cg%3E%3Crect x='40' y='40' width='8' height='3' fill='%23ff6b4a' transform='rotate(20 44 41)'/%3E%3Crect x='80' y='90' width='10' height='4' fill='%23ffa566' transform='rotate(-30 85 92)'/%3E%3Crect x='240' y='60' width='8' height='3' fill='%23fae178' transform='rotate(45 244 61)'/%3E%3Crect x='280' y='120' width='10' height='3' fill='%237e8eff' transform='rotate(-15 285 121)'/%3E%3Crect x='30' y='160' width='8' height='3' fill='%232e7d5b' transform='rotate(60 34 161)'/%3E%3Crect x='200' y='200' width='10' height='4' fill='%23ff6b4a' transform='rotate(-40 205 202)'/%3E%3Crect x='100' y='250' width='8' height='3' fill='%23fae178' transform='rotate(15 104 251)'/%3E%3Crect x='280' y='280' width='10' height='3' fill='%23ffa566' transform='rotate(-50 285 281)'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: cover;
+    opacity: 0.7;
+  }
+  .scr-sent > * { position: relative; z-index: 2; }
+  .sent-check {
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+    display: grid; place-items: center;
+    color: white; font-size: 30px; font-weight: 700;
+    box-shadow: 0 8px 22px rgba(255,107,74,0.4);
+    margin-bottom: 18px;
+  }
+  .sent-h {
+    font-family: var(--display); font-weight: 700;
+    font-size: 26px; color: var(--ocean);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+  .sent-sub {
+    font-family: var(--display); font-size: 14px;
+    color: var(--slate-soft); margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .sent-card { width: 200px; transform: rotate(2deg); margin-bottom: 22px; }
+  .sent-meta {
+    background: white; border-radius: 12px;
+    padding: 14px 18px; width: 100%;
+    display: flex; justify-content: space-between; gap: 14px;
+    margin-bottom: 18px;
+    border: 1px solid #e6dfd0;
+  }
+  .sent-meta div { font-family: var(--display); }
+  .sent-meta small { font-family: var(--type); font-size: 9px; color: var(--slate-mute); letter-spacing: 0.2em; text-transform: uppercase; display: block; margin-bottom: 2px; }
+  .sent-meta b { font-weight: 600; font-size: 14px; color: var(--ocean); }
+  .sent-share {
+    display: flex; gap: 8px; width: 100%;
+  }
+  .sent-share button {
+    flex: 1; padding: 12px;
+    background: white; border: 1.5px solid var(--coral);
+    color: var(--coral-deep);
+    border-radius: 999px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px;
+  }
+
+  /* ============ SCREEN: RUNNER POV ============ */
+  .scr-runner {
+    background:
+      radial-gradient(circle at 50% 100%, var(--coral) 0%, transparent 60%),
+      linear-gradient(180deg, #2a1a14 0%, #1a1410 100%);
+    color: white;
+    padding: 70px 22px 22px;
+    display: flex; flex-direction: column;
+    align-items: center;
+  }
+  .runner-locknotif {
+    width: 100%;
+    background: rgba(20, 16, 12, 0.8);
+    backdrop-filter: blur(20px);
+    border-radius: 16px;
+    padding: 12px 14px;
+    display: grid; grid-template-columns: 36px 1fr;
+    gap: 12px; align-items: center;
+    border: 1px solid rgba(255,107,74,0.3);
+    margin-bottom: 22px;
+  }
+  .runner-locknotif-ico {
+    width: 36px; height: 36px;
+    border-radius: 9px;
+    background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+    display: grid; place-items: center;
+    color: white; font-family: var(--display); font-weight: 800;
+    font-size: 18px;
+  }
+  .runner-locknotif-text {
+    font-family: var(--display);
+  }
+  .runner-locknotif-text small {
+    font-family: var(--type); font-size: 9px;
+    letter-spacing: 0.18em; color: var(--sunset);
+    text-transform: uppercase; display: block;
+  }
+  .runner-locknotif-text b {
+    font-family: var(--display); font-size: 14px;
+    color: white; font-weight: 600; display: block; margin-top: 1px;
+  }
+  .runner-card-wrap {
+    margin: 16px auto;
+    transform: rotate(-1deg);
+    animation: gentleSway 5s ease-in-out infinite alternate;
+  }
+  .runner-card-wrap .poly {
+    width: 240px;
+  }
+  .runner-card-wrap .poly-msg { font-size: 24px; }
+  @keyframes gentleSway {
+    0%   { transform: rotate(-1deg); }
+    100% { transform: rotate(1deg); }
+  }
+  .runner-meta {
+    text-align: center;
+    margin-top: 12px;
+    font-family: var(--type); font-size: 9.5px;
+    color: var(--sunset); letter-spacing: 0.22em;
+    text-transform: uppercase;
+  }
+  .runner-meta b {
+    display: block; font-family: var(--display);
+    font-size: 24px; font-weight: 700;
+    color: white; letter-spacing: -0.01em;
+    text-transform: none;
+    margin-top: 4px;
+  }
+  .runner-pace-strip {
+    margin-top: auto;
+    width: 100%;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,107,74,0.2);
+    border-radius: 14px;
+    padding: 12px 14px;
+    display: flex; justify-content: space-around;
+    font-family: var(--display);
+  }
+  .runner-pace-strip > div { text-align: center; }
+  .runner-pace-strip small {
+    font-family: var(--type); font-size: 9px;
+    color: var(--slate-mute); letter-spacing: 0.18em;
+    text-transform: uppercase; display: block;
+  }
+  .runner-pace-strip b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 17px; color: var(--sunset);
+    margin-top: 2px; display: block;
+  }
+
+  /* ============ SCREEN: REEL ============ */
+  .scr-reel {
+    background:
+      radial-gradient(circle at 30% 0%, var(--soft-pink) 0%, transparent 60%),
+      linear-gradient(180deg, var(--paper) 0%, #fde7d0 100%);
+    padding: 50px 18px 18px;
+    overflow-y: auto;
+    color: var(--slate);
+  }
+  .reel-h {
+    font-family: var(--display); font-weight: 700;
+    font-size: 22px; color: var(--ocean);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    margin-bottom: 4px;
+    padding: 0 6px;
+  }
+  .reel-h em {
+    font-family: var(--hand); font-style: normal;
+    color: var(--coral); font-size: 26px;
+    transform: rotate(-2deg); display: inline-block;
+  }
+  .reel-sub {
+    font-family: var(--display); font-size: 12.5px;
+    color: var(--slate-soft);
+    margin-bottom: 18px; padding: 0 6px;
+  }
+  .reel-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .reel-grid .poly { transform: rotate(-2deg); }
+  .reel-grid .poly:nth-child(2n) { transform: rotate(2deg); }
+  .reel-grid .poly:nth-child(3n) { transform: rotate(-1deg); }
+  .reel-grid .poly:nth-child(5n) { transform: rotate(3deg); }
+  .reel-grid .poly-msg { font-size: 14px; }
+  .reel-bottom {
+    margin: 22px auto 0;
+    display: flex; gap: 8px;
+    padding: 0 6px;
+  }
+  .reel-bottom button {
+    flex: 1; padding: 12px;
+    background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+    color: white; border-radius: 999px;
+    font-family: var(--display); font-weight: 600; font-size: 13px;
+    box-shadow: 0 6px 16px rgba(255,107,74,0.3);
+  }
+  .reel-bottom button.alt {
+    background: white; color: var(--coral-deep);
+    border: 1.5px solid var(--coral);
+    box-shadow: none;
+  }
+
+  /* ============ JUMBOTRON MOCKUP (below phone) ============ */
+  .jumbotron-wrap {
+    width: 100%;
+    max-width: 480px;
+  }
+  .jumbotron-label {
+    font-family: var(--type); font-size: 10px;
+    color: var(--coral); letter-spacing: 0.3em;
+    text-transform: uppercase;
+    text-align: center; margin-bottom: 12px;
+  }
+  .jumbotron {
+    aspect-ratio: 16 / 9;
+    background: var(--ink-deep);
+    border-radius: 14px;
+    padding: 8px;
+    box-shadow:
+      0 30px 60px rgba(0,0,0,0.6),
+      0 0 0 2px #2a221a,
+      inset 0 0 30px rgba(0,0,0,0.6);
+    position: relative;
+  }
+  .jumbotron-inner {
+    width: 100%; height: 100%;
+    border-radius: 8px;
+    background:
+      radial-gradient(ellipse at 50% 30%, var(--coral) 0%, var(--coral-deep) 50%, var(--ocean) 100%);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    align-items: center;
+    padding: 14px 18px;
+    gap: 14px;
+    position: relative;
+    overflow: hidden;
+  }
+  .jumbotron-inner::before {
+    content: ''; position: absolute; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Cfilter id='nn'%3E%3CfeTurbulence baseFrequency='2.5' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23nn)'/%3E%3C/svg%3E");
+    opacity: 0.7; pointer-events: none;
+  }
+  .jumbotron-card {
+    transform: rotate(-3deg);
+    z-index: 2;
+  }
+  .jumbotron-card .poly { width: 110px; padding: 5px 5px 14px; }
+  .jumbotron-card .poly-msg { font-size: 12px; margin-top: 4px; }
+  .jumbotron-text {
+    color: white; z-index: 2;
+    font-family: var(--display);
+  }
+  .jumbotron-text small {
+    font-family: var(--type); font-size: 8.5px;
+    letter-spacing: 0.25em; color: var(--lemon);
+    text-transform: uppercase; display: block;
+  }
+  .jumbotron-text b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 22px; color: white;
+    line-height: 1.0; margin: 4px 0;
+    letter-spacing: -0.02em;
+    display: block;
+  }
+  .jumbotron-text p {
+    font-family: var(--hand); font-size: 18px;
+    color: var(--lemon);
+    line-height: 1.05;
+  }
+  .jumbotron-sponsor {
+    position: absolute; bottom: 8px; left: 12px; right: 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 2;
+    font-family: var(--type); font-size: 7.5px;
+    letter-spacing: 0.25em; color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 6px;
+  }
+  .jumbotron-sponsor b {
+    font-family: var(--brand); font-style: italic; font-weight: 600;
+    color: white; font-size: 13px;
+    letter-spacing: 0; text-transform: none;
+  }
+
+  /* ============ CONTROLS COL ============ */
+  .ctrl-col { display: flex; flex-direction: column; gap: 24px; }
+  .ctrl-block {
+    border: 1px solid rgba(255,107,74,0.18);
+    background: linear-gradient(180deg, rgba(20,16,12,0.6), rgba(20,16,12,0.3));
+    border-radius: 12px;
+    padding: 22px;
+    backdrop-filter: blur(8px);
+  }
+  .ctrl-eyebrow {
+    font-family: var(--type); font-size: 10px;
+    color: var(--sunset); letter-spacing: 0.3em;
+    text-transform: uppercase; margin-bottom: 6px;
+  }
+  .ctrl-h {
+    font-family: var(--brand); font-style: italic;
+    font-weight: 400; font-size: 26px; line-height: 1.1;
+    color: var(--cream-light);
+    margin-bottom: 10px;
+  }
+  .ctrl-h b { font-style: normal; font-weight: 600; color: var(--coral); font-family: var(--display); letter-spacing: -0.01em; }
+  .ctrl-p {
+    font-family: var(--display); font-size: 14.5px;
+    line-height: 1.55; color: var(--cream);
+    opacity: 0.82;
+  }
+  .ctrl-p + .ctrl-p { margin-top: 10px; }
+
+  .steps { display: flex; flex-direction: column; }
+  .step {
+    display: grid; grid-template-columns: 32px 1fr;
+    gap: 14px; align-items: start;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(255,107,74,0.12);
+    cursor: pointer;
+    text-align: left;
+    transition: padding 0.3s;
+  }
+  .step:last-child { border-bottom: none; }
+  .step:hover { padding-left: 6px; }
+  .step-num {
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255,107,74,0.4);
+    color: var(--coral);
+    display: grid; place-items: center;
+    font-family: var(--type); font-size: 12px;
+    transition: all 0.3s;
+  }
+  .step.active .step-num,
+  .step.done .step-num {
+    background: var(--coral); color: white;
+    border-color: var(--coral);
+  }
+  .step.done .step-num::before { content: '✓'; }
+  .step.done .step-num span { display: none; }
+  .step-label {
+    font-family: var(--display); font-weight: 600;
+    font-size: 16px; color: var(--cream-light);
+    margin-bottom: 2px;
+    letter-spacing: -0.005em;
+  }
+  .step-desc {
+    font-family: var(--display); font-size: 13px;
+    color: var(--sepia); line-height: 1.4;
+  }
+  .step.active .step-label { color: var(--sunset); }
+
+  .facts {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 1px;
+    background: rgba(255,107,74,0.15);
+    border: 1px solid rgba(255,107,74,0.18);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .fact { background: rgba(12,8,5,0.7); padding: 18px; }
+  .fact b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 28px; color: var(--coral);
+    display: block; line-height: 1; margin-bottom: 6px;
+    letter-spacing: -0.025em;
+  }
+  .fact small {
+    font-family: var(--type); font-size: 9.5px;
+    color: var(--sepia); letter-spacing: 0.16em;
+    text-transform: uppercase; line-height: 1.4; display: block;
+  }
+
+  .ctrl-big-btn {
+    width: 100%;
+    display: grid; grid-template-columns: 1fr auto; align-items: center;
+    background: linear-gradient(140deg, var(--ocean) 0%, var(--ocean-deep, #061021) 100%);
+    color: white;
+    padding: 18px 22px;
+    border-radius: 10px;
+    border: 1px solid var(--ocean-soft);
+    font-family: var(--display); font-weight: 500;
+    text-align: left;
+    transition: all 0.3s;
+    position: relative; overflow: hidden;
+  }
+  .ctrl-big-btn::before {
+    content: ''; position: absolute; top: 0; left: -50%;
+    width: 50%; height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,107,74,0.4), transparent);
+    transition: left 0.7s;
+  }
+  .ctrl-big-btn:hover::before { left: 110%; }
+  .ctrl-big-btn:hover { transform: translateY(-1px); }
+  .ctrl-big-btn small {
+    display: block;
+    font-family: var(--display); font-size: 10.5px;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--coral); font-weight: 700;
+    margin-bottom: 4px;
+  }
+  .ctrl-big-btn b {
+    font-family: var(--display); font-weight: 700; font-size: 18px;
+    letter-spacing: -0.015em;
+  }
+  .ctrl-big-btn-arrow {
+    width: 36px; height: 36px;
+    background: var(--coral); border-radius: 50%;
+    display: grid; place-items: center;
+    color: white; font-size: 18px; font-weight: 700;
+  }
+
+  /* ============ SPONSOR CHEER ZONE TAKEOVER ============ */
+  .cheer-takeover {
+    position: fixed; inset: 0;
+    z-index: 200;
+    background: var(--paper);
+    color: var(--slate);
+    overflow-y: auto;
+    transform: translateY(100%);
+    transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .cheer-takeover.show { transform: translateY(0); }
+  .ck-shell { max-width: 1280px; margin: 0 auto; padding: 32px 48px 64px; }
+  .ck-bar {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-bottom: 28px;
+    border-bottom: 2px solid var(--coral);
+    margin-bottom: 36px;
+  }
+  .ck-bar-left { display: flex; align-items: center; gap: 16px; }
+  .ck-logo {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #00558e, #0078c4);
+    border-radius: 14px;
+    display: grid; place-items: center;
+    color: white; font-family: var(--display); font-weight: 800;
+    font-size: 24px;
+    box-shadow: 0 4px 12px rgba(0,85,142,0.3);
+  }
+  .ck-bar-name b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 24px; color: var(--ocean); display: block;
+    letter-spacing: -0.02em;
+  }
+  .ck-bar-name small {
+    font-family: var(--display); font-weight: 500; font-size: 12px;
+    color: var(--slate-soft); letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .ck-close {
+    font-family: var(--display); font-weight: 600; font-size: 13px;
+    padding: 10px 18px;
+    background: var(--coral); color: white;
+    border-radius: 999px;
+    transition: all 0.3s;
+  }
+  .ck-close:hover { background: var(--ocean); transform: translateY(-1px); }
+
+  .ck-hero { display: grid; grid-template-columns: 1.4fr 1fr; gap: 48px; margin-bottom: 48px; align-items: end; }
+  .ck-tagline {
+    font-family: var(--display); font-weight: 700; font-size: 11px;
+    letter-spacing: 0.22em; color: var(--coral);
+    text-transform: uppercase; margin-bottom: 14px;
+  }
+  .ck-headline {
+    font-family: var(--display); font-weight: 700;
+    font-size: 56px; line-height: 0.96;
+    color: var(--ocean);
+    letter-spacing: -0.025em;
+    font-variation-settings: "opsz" 96;
+  }
+  .ck-headline em {
+    font-family: var(--hand); font-size: 64px;
+    font-style: normal; color: var(--coral);
+    transform: rotate(-2deg); display: inline-block;
+    line-height: 0.9;
+  }
+  .ck-headline-sub {
+    font-family: var(--display); font-size: 16px;
+    color: var(--slate-soft); margin-top: 16px;
+    max-width: 520px; line-height: 1.5;
+  }
+  .ck-hero-r {
+    display: flex; flex-direction: column; align-items: flex-end;
+    gap: 8px; padding-bottom: 8px;
+  }
+  .ck-hero-r small {
+    font-family: var(--display); font-weight: 600;
+    font-size: 10.5px; letter-spacing: 0.2em;
+    color: var(--slate-mute); text-transform: uppercase;
+  }
+  .ck-hero-r b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 14px; color: var(--ocean);
+    letter-spacing: -0.01em;
+  }
+
+  .ck-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: rgba(15,40,71,0.12);
+    border: 1.5px solid var(--ocean);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 48px;
+  }
+  .ck-metric {
+    background: white;
+    padding: 26px 24px;
+  }
+  .ck-metric small {
+    font-family: var(--display); font-weight: 600;
+    font-size: 10.5px; letter-spacing: 0.18em;
+    color: var(--slate-soft); text-transform: uppercase;
+    display: block; margin-bottom: 12px;
+  }
+  .ck-metric b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 44px; color: var(--ocean);
+    line-height: 1; display: block;
+    letter-spacing: -0.025em;
+  }
+  .ck-metric-trend {
+    margin-top: 8px;
+    font-family: var(--display); font-size: 12px;
+    color: var(--coral); font-weight: 600;
+  }
+  .ck-metric-trend.flat { color: var(--slate-mute); }
+
+  /* charts row */
+  .ck-charts { display: grid; grid-template-columns: 1.4fr 1fr; gap: 32px; margin-bottom: 40px; }
+  .ck-card {
+    background: white;
+    border: 1px solid rgba(15,40,71,0.1);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .ck-card-h {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: 24px;
+  }
+  .ck-card-h b {
+    font-family: var(--display); font-weight: 700; font-size: 18px;
+    color: var(--ocean); letter-spacing: -0.01em;
+  }
+  .ck-card-h small {
+    font-family: var(--display); font-size: 11px;
+    color: var(--slate-mute); letter-spacing: 0.16em;
+    text-transform: uppercase; font-weight: 600;
+  }
+  /* card showcase grid in dashboard */
+  .ck-showcase {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+  }
+  .ck-showcase .poly { padding: 8px 8px 22px; }
+  .ck-showcase .poly:nth-child(odd) { transform: rotate(-2deg); }
+  .ck-showcase .poly:nth-child(even) { transform: rotate(2deg); }
+  .ck-showcase .poly-msg { font-size: 12px; }
+
+  .ck-feed { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; }
+  .feed-list { display: flex; flex-direction: column; }
+  .feed-row {
+    display: grid; grid-template-columns: 36px 1fr auto;
+    gap: 14px; align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid rgba(15,40,71,0.08);
+    font-family: var(--display);
+  }
+  .feed-row:last-child { border-bottom: none; }
+  .feed-av {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+    color: white;
+    display: grid; place-items: center;
+    font-family: var(--display); font-weight: 700; font-size: 13px;
+  }
+  .feed-row b { font-weight: 600; font-size: 14px; color: var(--ocean); display: block; }
+  .feed-row small { font-size: 11.5px; color: var(--slate-mute); }
+  .feed-time { font-family: var(--display); font-size: 11px; color: var(--slate-mute); font-weight: 500; }
+
+  .ck-roi {
+    background: linear-gradient(135deg, var(--ocean) 0%, #061021 100%);
+    color: white;
+    padding: 28px;
+    border-radius: 16px;
+    position: relative; overflow: hidden;
+  }
+  .ck-roi::after {
+    content: ''; position: absolute;
+    right: -40px; top: -40px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, var(--coral), transparent 70%);
+    opacity: 0.4;
+  }
+  .ck-roi small {
+    font-family: var(--display); font-weight: 600;
+    font-size: 10.5px; letter-spacing: 0.2em;
+    color: var(--coral); text-transform: uppercase;
+    display: block; margin-bottom: 10px;
+  }
+  .ck-roi b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 56px; line-height: 1;
+    letter-spacing: -0.025em;
+    display: block;
+  }
+  .ck-roi p {
+    font-family: var(--display); font-size: 14px;
+    margin-top: 14px; line-height: 1.55;
+    opacity: 0.9;
+  }
+  .ck-roi-sub {
+    margin-top: 18px; padding-top: 18px;
+    border-top: 1px solid rgba(255,255,255,0.18);
+    font-family: var(--display); font-size: 13px;
+    line-height: 1.55; opacity: 0.9;
+  }
+  .ck-roi-sub b { font-size: 13px; font-weight: 700; color: var(--coral); display: inline; }
+
+  /* footer */
+  .pagefoot {
+    text-align: center;
+    padding: 32px 0 48px;
+    font-family: var(--type); font-size: 10px;
+    color: var(--sepia); letter-spacing: 0.22em;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(201,169,97,0.12);
+    margin: 0 64px;
+  }
+  .pagefoot b { color: var(--coral); }
+
+  @media (max-width: 1024px) {
+    .device-col { position: static; }
+    .topbar { grid-template-columns: 1fr; gap: 12px; padding: 14px 20px; }
+    .phase { justify-self: start; }
+    .ck-hero { grid-template-columns: 1fr; gap: 18px; }
+    .ck-headline { font-size: 38px; }
+    .ck-headline em { font-size: 44px; }
+    .ck-metrics { grid-template-columns: 1fr 1fr; }
+    .ck-charts { grid-template-columns: 1fr; }
+    .ck-feed { grid-template-columns: 1fr; }
+    .ck-shell { padding: 24px 20px 48px; }
+    .ck-showcase { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+
+<div class="shell">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-seal">C</div>
+      <span>Run Local · Cheer Card</span>
+    </div>
+    <div class="topbar-center">
+      Concept demo · prepared for <b>Race Director Conversation</b> · May 2026
+    </div>
+    <div class="phase" role="tablist" aria-label="Cheer card phase">
+      <button data-phase="compose" class="active">Compose</button>
+      <button data-phase="raceday">Race day</button>
+      <button data-phase="after">After</button>
+    </div>
+  </header>
+
+  <!-- CONCEPT NAV -->
+  <nav class="concept-nav">
+    <span class="concept-nav-label">Concepts for Run Local</span>
+    <a href="index.html" class="concept-link">
+      <span class="concept-num">01</span>
+      <span class="concept-name">Riviera Run Investigation</span>
+      <span class="concept-tag">Mystery hunt · pre-race engagement</span>
+    </a>
+    <a href="cheer.html" class="concept-link active">
+      <span class="concept-num">02</span>
+      <span class="concept-name">Cheer Card</span>
+      <span class="concept-tag">Spectator activation · race day</span>
+    </a>
+  </nav>
+
+  <main class="stage">
+
+    <!-- DEVICE COLUMN -->
+    <div class="device-col">
+      <div class="iphone">
+        <div class="screen" id="screen">
+
+          <!-- LANDING -->
+          <div class="screen-stage scr-landing active" data-stage="landing">
+            <div class="land-hero">
+              <div class="land-hero-sticker">Mile 6 · Sunday 7:48 AM</div>
+              <div class="land-hero-card">
+                <div class="poly">
+                  <div class="poly-photo ph-mom"></div>
+                  <div class="poly-msg">GO MOM!!</div>
+                </div>
+              </div>
+            </div>
+            <div class="land-eyebrow">Cheer Card by Run Local</div>
+            <h1 class="land-title">Be there <em>from anywhere.</em></h1>
+            <p class="land-sub">Friends and family compose a sign in 2 minutes. Your runner sees it at the mile they need it most — on the cheer-zone screen, on their phone, in the post-race reel.</p>
+            <button class="land-cta" data-go="compose">Send a cheer →</button>
+            <div class="land-foot">No app · Works for any runner with a bib · Free for spectators</div>
+          </div>
+
+          <!-- COMPOSE -->
+          <div class="screen-stage scr-compose" data-stage="compose">
+            <button class="compose-back" data-go="landing">← Back</button>
+            <div class="compose-step">Step 1 of 1 · 2 minutes</div>
+            <h2 class="compose-h">Compose Mom's cheer.</h2>
+
+            <div class="compose-preview">
+              <div class="poly">
+                <div class="poly-photo ph-mom"></div>
+                <div class="poly-msg" id="previewMsg">GO MOM!!</div>
+              </div>
+            </div>
+
+            <div class="compose-fields">
+              <div class="ck-field">
+                <div class="ck-field-label">Photo</div>
+                <div class="ck-photo-row">
+                  <div class="ck-photo-thumb">+</div>
+                  <div>
+                    <b>Family pic from Sunday brunch</b>
+                    <small>Tap to swap</small>
+                  </div>
+                </div>
+              </div>
+
+              <div class="ck-field">
+                <div class="ck-field-label">Your message</div>
+                <textarea id="msgInput" maxlength="48" rows="2">GO MOM!!</textarea>
+              </div>
+
+              <div class="ck-field">
+                <div class="ck-field-label">For runner</div>
+                <input type="text" value="Alice Chen · bib 1247" readonly>
+              </div>
+
+              <div class="ck-field">
+                <div class="ck-field-label">Show it at</div>
+                <div class="ck-mile-grid">
+                  <button class="ck-mile" data-mile="6">
+                    <small>Mile 6</small>
+                    <b>Funk Zone Cheer</b>
+                    <span>Powered by Mission Roasters</span>
+                  </button>
+                  <button class="ck-mile selected" data-mile="9">
+                    <small>Mile 9</small>
+                    <b>Hilltop Cheer</b>
+                    <span>Powered by HOKA</span>
+                  </button>
+                  <button class="ck-mile" data-mile="11">
+                    <small>Mile 11</small>
+                    <b>Maritime Mile</b>
+                    <span>Powered by Hotel Californian</span>
+                  </button>
+                  <button class="ck-mile" data-mile="finish">
+                    <small>Finish</small>
+                    <b>Finish Festival</b>
+                    <span>Powered by Riviera Running Co.</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <button class="compose-send" data-go="sent">Send Alice her cheer →</button>
+          </div>
+
+          <!-- SENT -->
+          <div class="screen-stage scr-sent" data-stage="sent">
+            <div class="confetti"></div>
+            <div class="sent-check">✓</div>
+            <h2 class="sent-h">Your cheer is queued.</h2>
+            <p class="sent-sub">Alice will see it Sunday morning, mile 9. We'll send you her reaction after the race.</p>
+            <div class="sent-card">
+              <div class="poly">
+                <div class="poly-photo ph-mom"></div>
+                <div class="poly-msg">GO MOM!!</div>
+                <div class="poly-meta">For Alice · Mile 9 · Sunday 8:14 AM</div>
+              </div>
+            </div>
+            <div class="sent-meta">
+              <div>
+                <small>Cheer zone</small>
+                <b>Mile 9 · Hilltop</b>
+              </div>
+              <div>
+                <small>Sponsor</small>
+                <b>HOKA</b>
+              </div>
+            </div>
+            <div class="sent-share">
+              <button>Tell Dad</button>
+              <button>Add another</button>
+            </div>
+          </div>
+
+          <!-- RUNNER POV -->
+          <div class="screen-stage scr-runner" data-stage="runner">
+            <div class="runner-locknotif">
+              <div class="runner-locknotif-ico">!</div>
+              <div class="runner-locknotif-text">
+                <small>Cheer Card · Mile 9 ahead</small>
+                <b>Card from Mom — coming up in 0.4 mi</b>
+              </div>
+            </div>
+
+            <div class="runner-card-wrap">
+              <div class="poly">
+                <div class="poly-photo ph-mom"></div>
+                <div class="poly-msg">GO MOM!!</div>
+              </div>
+            </div>
+
+            <div class="runner-meta">
+              From Mom
+              <b>Mile 9 · Hilltop</b>
+            </div>
+
+            <div class="runner-pace-strip">
+              <div>
+                <small>Pace</small>
+                <b>8:42</b>
+              </div>
+              <div>
+                <small>Mile</small>
+                <b>8.6</b>
+              </div>
+              <div>
+                <small>Cheers ahead</small>
+                <b>4</b>
+              </div>
+            </div>
+          </div>
+
+          <!-- REEL -->
+          <div class="screen-stage scr-reel" data-stage="reel">
+            <h2 class="reel-h">Alice's race · <em>11 cheers</em></h2>
+            <p class="reel-sub">From 8 supporters across 4 cheer zones. Tap any card to relive the moment.</p>
+            <div class="reel-grid">
+              <div class="poly">
+                <div class="poly-photo ph-mom"></div>
+                <div class="poly-msg">GO MOM!!</div>
+              </div>
+              <div class="poly">
+                <div class="poly-photo ph-friends"></div>
+                <div class="poly-msg">crush it babe</div>
+              </div>
+              <div class="poly">
+                <div class="poly-photo ph-dog"></div>
+                <div class="poly-msg">Roxie misses you</div>
+              </div>
+              <div class="poly">
+                <div class="poly-photo ph-coast"></div>
+                <div class="poly-msg">go fast Auntie Al</div>
+              </div>
+              <div class="poly">
+                <div class="poly-photo ph-trail"></div>
+                <div class="poly-msg">we're so proud</div>
+              </div>
+              <div class="poly">
+                <div class="poly-photo ph-cake"></div>
+                <div class="poly-msg">cake when you're done!</div>
+              </div>
+            </div>
+            <div class="reel-bottom">
+              <button>Share reel</button>
+              <button class="alt">Save photos</button>
+            </div>
+          </div>
+
+        </div><!-- /.screen -->
+      </div><!-- /.iphone -->
+
+      <!-- JUMBOTRON MOCKUP -->
+      <div class="jumbotron-wrap">
+        <div class="jumbotron-label">Mile 9 cheer-zone screen · Powered by HOKA</div>
+        <div class="jumbotron">
+          <div class="jumbotron-inner">
+            <div class="jumbotron-card">
+              <div class="poly">
+                <div class="poly-photo ph-mom"></div>
+                <div class="poly-msg">GO MOM!!</div>
+              </div>
+            </div>
+            <div class="jumbotron-text">
+              <small>Now cheering</small>
+              <b>ALICE CHEN<br>BIB 1247</b>
+              <p>"Go Mom!!" — from Karen</p>
+            </div>
+            <div class="jumbotron-sponsor">
+              <span>Mile 9 · Hilltop</span>
+              <b>HOKA</b>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /.device-col -->
+
+    <!-- CONTROLS COLUMN -->
+    <div class="ctrl-col">
+
+      <div class="ctrl-block">
+        <div class="ctrl-eyebrow">Concept · 60 seconds</div>
+        <h2 class="ctrl-h">Make spectatorship <b>visible.</b> Make support <b>portable.</b></h2>
+        <p class="ctrl-p">Friends and family compose a card — photo, message, mile — in two minutes from anywhere. The card lives in three places.</p>
+        <p class="ctrl-p">On the runner's phone as a wallet pass push when they approach the cheer zone. On the sponsor's physical screen at the cheer zone for the crowd. In the post-race reel as a memory artifact.</p>
+      </div>
+
+      <div class="facts">
+        <div class="fact"><b>2 min</b><small>compose time per card</small></div>
+        <div class="fact"><b>3</b><small>delivery touchpoints per card</small></div>
+        <div class="fact"><b>4–6</b><small>cheer zones per race · sponsor inventory</small></div>
+        <div class="fact"><b>8 ×</b><small>avg supporters per runner</small></div>
+      </div>
+
+      <div class="ctrl-block">
+        <div class="ctrl-eyebrow">Walk the demo</div>
+        <h2 class="ctrl-h" style="font-size:22px">Tap a step to advance the phone.</h2>
+        <div class="steps" id="steps">
+          <button class="step active" data-go="landing" data-step="0">
+            <span class="step-num"><span>1</span></span>
+            <div>
+              <div class="step-label">Discover</div>
+              <div class="step-desc">Friend gets a link from the runner's signup. Lands on the concept hook.</div>
+            </div>
+          </button>
+          <button class="step" data-go="compose" data-step="1">
+            <span class="step-num"><span>2</span></span>
+            <div>
+              <div class="step-label">Compose</div>
+              <div class="step-desc">Photo, message, runner, mile. Live polaroid preview. 2 minutes.</div>
+            </div>
+          </button>
+          <button class="step" data-go="sent" data-step="2">
+            <span class="step-num"><span>3</span></span>
+            <div>
+              <div class="step-label">Queue it</div>
+              <div class="step-desc">Card locked in for Mile 9. Confirmation. Optional: nudge another supporter.</div>
+            </div>
+          </button>
+          <button class="step" data-action="raceday" data-go="runner" data-step="3">
+            <span class="step-num"><span>4</span></span>
+            <div>
+              <div class="step-label">Race day · runner POV</div>
+              <div class="step-desc">Wallet pass surfaces 0.4 mi out. Card visible at sponsor screen. Crowd cheers.</div>
+            </div>
+          </button>
+          <button class="step" data-action="after" data-go="reel" data-step="4">
+            <span class="step-num"><span>5</span></span>
+            <div>
+              <div class="step-label">After · the reel</div>
+              <div class="step-desc">11 cards from 8 supporters compiled. Shareable artifact. Sponsor watermark.</div>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <button class="ctrl-big-btn" id="openSponsor">
+        <div>
+          <small>Now flip the lens</small>
+          <b>Show what HOKA sees →</b>
+        </div>
+        <div class="ctrl-big-btn-arrow">→</div>
+      </button>
+
+      <div class="ctrl-block" style="border-color: rgba(126,142,255,0.25)">
+        <div class="ctrl-eyebrow" style="color:var(--peri)">Why this is different</div>
+        <h2 class="ctrl-h">Not a runner-tracking app. A <b style="color:var(--peri)">supporter-first product.</b></h2>
+        <p class="ctrl-p">RaceJoy is text-only, sponsor-neutral, and runner-installed. Cheer Card is photo-driven, sponsor-funded, and supporter-installed. Different audience, different revenue, different brand impressions.</p>
+        <p class="ctrl-p" style="font-family:var(--type); font-size:11px; color:var(--coral); letter-spacing:0.1em; text-transform:uppercase; padding-top:10px; border-top:1px solid rgba(255,107,74,0.18); margin-top:14px;">
+          Build window · 2 weeks to a launchable v1.
+        </p>
+      </div>
+
+    </div>
+
+  </main>
+
+  <div class="pagefoot">
+    <b>Run Local</b> · Cheer Card · Concept demo · racemob
+  </div>
+
+</div><!-- /.shell -->
+
+<!-- SPONSOR CHEER ZONE TAKEOVER -->
+<div class="cheer-takeover" id="sponsor">
+  <div class="ck-shell">
+
+    <div class="ck-bar">
+      <div class="ck-bar-left">
+        <div class="ck-logo">H</div>
+        <div class="ck-bar-name">
+          <b>HOKA · Mile 9 Cheer Zone</b>
+          <small>Title sponsor · SB Half '26</small>
+        </div>
+      </div>
+      <button class="ck-close" id="closeSponsor">← Back to spectator view</button>
+    </div>
+
+    <div class="ck-hero">
+      <div>
+        <div class="ck-tagline">Cheer zone activation · Race day live</div>
+        <h1 class="ck-headline">Your cheer zone moved <em>3,200 hearts</em> in four hours.</h1>
+        <p class="ck-headline-sub">3,200 cards displayed on your screen. 2,100 social shares with your watermark. 14,400 brand impressions across the cheer-zone perimeter and post-race reel downloads.</p>
+      </div>
+      <div class="ck-hero-r">
+        <small>Reporting period</small>
+        <b>Sun May 17 · 6:30 AM → 10:30 AM</b>
+        <small style="margin-top:8px">Cheer-zone screen uptime</small>
+        <b style="color:var(--coral)">99.4%</b>
+      </div>
+    </div>
+
+    <div class="ck-metrics">
+      <div class="ck-metric">
+        <small>Cards displayed</small>
+        <b>3,247</b>
+        <div class="ck-metric-trend">▲ 21% above forecast</div>
+      </div>
+      <div class="ck-metric">
+        <small>Unique supporters</small>
+        <b>1,452</b>
+        <div class="ck-metric-trend">2.2 cards per supporter</div>
+      </div>
+      <div class="ck-metric">
+        <small>Social shares</small>
+        <b>2,118</b>
+        <div class="ck-metric-trend">73% include #HOKA tag</div>
+      </div>
+      <div class="ck-metric" style="background: linear-gradient(135deg, white, #fff5ed); border-left: 3px solid var(--coral);">
+        <small style="color:var(--coral)">Brand impressions</small>
+        <b>14,400</b>
+        <div class="ck-metric-trend">Cheer-zone perimeter + reel</div>
+      </div>
+    </div>
+
+    <div class="ck-charts">
+      <div class="ck-card">
+        <div class="ck-card-h">
+          <b>Live cheer wall</b>
+          <small>Sample of cards displayed today</small>
+        </div>
+        <div class="ck-showcase">
+          <div class="poly"><div class="poly-photo ph-mom"></div><div class="poly-msg">GO MOM!!</div></div>
+          <div class="poly"><div class="poly-photo ph-friends"></div><div class="poly-msg">crush it babe</div></div>
+          <div class="poly"><div class="poly-photo ph-dog"></div><div class="poly-msg">Roxie misses you</div></div>
+          <div class="poly"><div class="poly-photo ph-coast"></div><div class="poly-msg">go fast Auntie Al</div></div>
+          <div class="poly"><div class="poly-photo ph-trail"></div><div class="poly-msg">we're so proud</div></div>
+          <div class="poly"><div class="poly-photo ph-cake"></div><div class="poly-msg">cake when you're done!</div></div>
+          <div class="poly"><div class="poly-photo ph-finish"></div><div class="poly-msg">love you Dad</div></div>
+          <div class="poly"><div class="poly-photo ph-mom"></div><div class="poly-msg">FOR GRANDPA 🤍</div></div>
+        </div>
+      </div>
+
+      <div class="ck-roi">
+        <small>Estimated reach</small>
+        <b>14,400</b>
+        <p>Cheer-zone screen impressions, ambient crowd exposure, social shares with HOKA watermark, and post-race reel downloads viewed by friend networks.</p>
+        <div class="ck-roi-sub">
+          <b>Bottom line:</b> measurable ROI on a $24,000 title-tier sponsorship. The cheer zone is now an <em style="font-style:italic; opacity:0.95">activation surface</em>, not a logo placement.
+        </div>
+      </div>
+    </div>
+
+    <div class="ck-feed">
+      <div class="ck-card">
+        <div class="ck-card-h">
+          <b>Recent activity</b>
+          <small>Live</small>
+        </div>
+        <div class="feed-list">
+          <div class="feed-row">
+            <div class="feed-av">KC</div>
+            <div><b>Karen for Alice Chen</b><small>Card displayed · Mile 9</small></div>
+            <div class="feed-time">just now</div>
+          </div>
+          <div class="feed-row">
+            <div class="feed-av">JM</div>
+            <div><b>Jamie for Marcus Reyes</b><small>Card shared on Instagram · @hoka tagged</small></div>
+            <div class="feed-time">3 min ago</div>
+          </div>
+          <div class="feed-row">
+            <div class="feed-av">AT</div>
+            <div><b>Aunt Tess for Sarah K</b><small>Card displayed · Mile 9</small></div>
+            <div class="feed-time">7 min ago</div>
+          </div>
+          <div class="feed-row">
+            <div class="feed-av">DH</div>
+            <div><b>Dan for Priya P</b><small>Card displayed · Mile 9</small></div>
+            <div class="feed-time">12 min ago</div>
+          </div>
+          <div class="feed-row">
+            <div class="feed-av">MC</div>
+            <div><b>Marco for Ethan W</b><small>Card displayed + 14 reactions</small></div>
+            <div class="feed-time">18 min ago</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ck-card">
+        <div class="ck-card-h">
+          <b>Brand sentiment</b>
+          <small>Social listening</small>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:14px;">
+          <div style="display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center;">
+            <div>
+              <small style="font-family:var(--display); font-weight:600; font-size:11px; color:var(--slate-soft); letter-spacing:0.18em; text-transform:uppercase;">Positive mentions</small>
+              <div style="height:8px; background:#f0e5d6; border-radius:999px; margin-top:8px; overflow:hidden;">
+                <div style="height:100%; background:linear-gradient(90deg, var(--coral), var(--coral-deep)); width:91%;"></div>
+              </div>
+            </div>
+            <b style="font-family:var(--display); font-weight:700; font-size:20px; color:var(--ocean);">91%</b>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center;">
+            <div>
+              <small style="font-family:var(--display); font-weight:600; font-size:11px; color:var(--slate-soft); letter-spacing:0.18em; text-transform:uppercase;">Tag inclusion (@hoka)</small>
+              <div style="height:8px; background:#f0e5d6; border-radius:999px; margin-top:8px; overflow:hidden;">
+                <div style="height:100%; background:linear-gradient(90deg, var(--ocean), var(--ocean-soft)); width:73%;"></div>
+              </div>
+            </div>
+            <b style="font-family:var(--display); font-weight:700; font-size:20px; color:var(--ocean);">73%</b>
+          </div>
+          <div style="display:grid; grid-template-columns:1fr auto; gap:14px; align-items:center;">
+            <div>
+              <small style="font-family:var(--display); font-weight:600; font-size:11px; color:var(--slate-soft); letter-spacing:0.18em; text-transform:uppercase;">Repeat supporters</small>
+              <div style="height:8px; background:#f0e5d6; border-radius:999px; margin-top:8px; overflow:hidden;">
+                <div style="height:100%; background:linear-gradient(90deg, var(--peri), #5d6cff); width:54%;"></div>
+              </div>
+            </div>
+            <b style="font-family:var(--display); font-weight:700; font-size:20px; color:var(--ocean);">54%</b>
+          </div>
+        </div>
+        <div style="margin-top:18px; padding-top:18px; border-top:1px solid rgba(15,40,71,0.08); font-family:var(--hand); font-size:18px; color:var(--ocean); line-height:1.2; transform:rotate(-1deg);">
+          "I cried at mile 9. Best race surprise ever." <span style="font-family:var(--display); font-style:normal; font-size:11px; color:var(--slate-mute); letter-spacing:0.15em; text-transform:uppercase; display:block; margin-top:8px; transform:rotate(1deg);">— @ali_runs · Instagram · 2.4k likes</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function(){
+  const screen = document.getElementById('screen');
+  const stages = screen.querySelectorAll('.screen-stage');
+  const steps  = document.querySelectorAll('#steps .step');
+  const phaseBtns = document.querySelectorAll('.phase button');
+  const sponsor = document.getElementById('sponsor');
+  const previewMsg = document.getElementById('previewMsg');
+  const msgInput = document.getElementById('msgInput');
+
+  function showStage(name) {
+    stages.forEach(s => s.classList.toggle('active', s.dataset.stage === name));
+  }
+  function activateStep(i) {
+    steps.forEach((s, idx) => {
+      s.classList.toggle('active', idx === i);
+      s.classList.toggle('done', idx < i);
+    });
+  }
+
+  // routing
+  document.body.addEventListener('click', (e) => {
+    const goTarget = e.target.closest('[data-go]');
+    if (goTarget && goTarget.dataset.go) {
+      const dest = goTarget.dataset.go;
+      showStage(dest);
+      const stepIdx = goTarget.dataset.step;
+      if (stepIdx !== undefined) activateStep(parseInt(stepIdx));
+      else {
+        const matchingStep = Array.from(steps).findIndex(s => s.dataset.go === dest);
+        if (matchingStep >= 0) activateStep(matchingStep);
+      }
+    }
+
+    const action = e.target.closest('[data-action]');
+    if (action) {
+      const what = action.dataset.action;
+      if (what === 'raceday') setPhase('raceday');
+      if (what === 'after') setPhase('after');
+    }
+
+    const mile = e.target.closest('.ck-mile');
+    if (mile) {
+      document.querySelectorAll('.ck-mile').forEach(m => m.classList.remove('selected'));
+      mile.classList.add('selected');
+    }
+
+    if (e.target.closest('#openSponsor')) sponsor.classList.add('show');
+    if (e.target.closest('#closeSponsor')) sponsor.classList.remove('show');
+  });
+
+  // live message preview as you type
+  if (msgInput && previewMsg) {
+    msgInput.addEventListener('input', () => {
+      previewMsg.textContent = msgInput.value || 'Your message';
+    });
+  }
+
+  // phase toggle drives screen
+  function setPhase(p) {
+    phaseBtns.forEach(b => b.classList.toggle('active', b.dataset.phase === p));
+    if (p === 'compose') {
+      showStage('landing');
+      activateStep(0);
+    } else if (p === 'raceday') {
+      showStage('runner');
+      activateStep(3);
+    } else if (p === 'after') {
+      showStage('reel');
+      activateStep(4);
+    }
+  }
+  phaseBtns.forEach(b => b.addEventListener('click', () => setPhase(b.dataset.phase)));
+})();
+</script>
+
+</body>
+</html>

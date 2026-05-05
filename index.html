@@ -131,6 +131,69 @@
     box-shadow: 0 1px 4px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.3);
   }
 
+  /* ============ CONCEPT NAV ============ */
+  .concept-nav {
+    position: relative; z-index: 9;
+    display: grid; grid-template-columns: auto 1fr 1fr;
+    gap: 12px; align-items: stretch;
+    padding: 14px 32px;
+    border-bottom: 1px solid rgba(201,169,97,0.1);
+    background: rgba(0,0,0,0.3);
+  }
+  .concept-nav-label {
+    font-family: var(--type); font-size: 9.5px;
+    color: var(--sepia); letter-spacing: 0.25em;
+    text-transform: uppercase;
+    align-self: center;
+    padding-right: 14px;
+    border-right: 1px solid rgba(201,169,97,0.18);
+  }
+  .concept-link {
+    display: grid; grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    column-gap: 12px;
+    padding: 10px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s;
+    background: transparent;
+    border: 1px solid transparent;
+  }
+  .concept-link:hover {
+    background: rgba(201,169,97,0.05);
+    border-color: rgba(201,169,97,0.18);
+  }
+  .concept-link.active {
+    background: rgba(201,169,97,0.08);
+    border-color: rgba(201,169,97,0.3);
+  }
+  .concept-num {
+    grid-row: 1 / span 2;
+    align-self: center;
+    font-family: var(--display); font-style: italic;
+    font-weight: 600; font-size: 24px;
+    color: var(--brass);
+    letter-spacing: -0.02em;
+  }
+  .concept-link.active .concept-num { color: var(--brass-bright); }
+  .concept-name {
+    font-family: var(--display); font-style: italic;
+    font-weight: 500; font-size: 16px;
+    color: var(--cream-light);
+    line-height: 1.1;
+  }
+  .concept-tag {
+    font-family: var(--type); font-size: 9px;
+    color: var(--sepia); letter-spacing: 0.18em;
+    text-transform: uppercase;
+    line-height: 1.2;
+    margin-top: 2px;
+  }
+  @media (max-width: 800px) {
+    .concept-nav { grid-template-columns: 1fr; padding: 10px 16px; }
+    .concept-nav-label { border-right: none; padding-right: 0; }
+  }
+
   /* ============ STAGE GRID ============ */
   .stage {
     display: grid;
@@ -698,6 +761,114 @@
     text-transform: uppercase; letter-spacing: 0.1em;
   }
 
+  /* ============ BUREAU FAVOR COUPON ============ */
+  .coupon-overlay {
+    position: absolute; left: 0; right: 0; bottom: 0;
+    z-index: 35;
+    padding: 16px;
+    transform: translateY(110%);
+    transition: transform 0.7s cubic-bezier(0.22, 1.2, 0.36, 1);
+    pointer-events: none;
+  }
+  .coupon-overlay.show { transform: translateY(0); pointer-events: auto; }
+  .coupon {
+    background:
+      repeating-linear-gradient(0deg, transparent 0, transparent 12px, rgba(139,111,71,0.04) 12px, rgba(139,111,71,0.04) 13px),
+      var(--cream-light);
+    color: var(--ink);
+    border-radius: 6px;
+    padding: 16px 18px;
+    box-shadow: 0 -12px 40px rgba(0,0,0,0.5), 0 0 0 1px var(--brass);
+    position: relative;
+    overflow: hidden;
+  }
+  .coupon::before, .coupon::after {
+    content: ''; position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    background: var(--ink-deep);
+    box-shadow: inset 0 1px 2px rgba(0,0,0,0.4);
+  }
+  .coupon::before { left: -7px; }
+  .coupon::after  { right: -7px; }
+  .coupon-row {
+    display: grid; grid-template-columns: 1fr auto;
+    gap: 12px; align-items: center;
+  }
+  .coupon-eyebrow {
+    font-family: var(--type); font-size: 9px;
+    letter-spacing: 0.28em; color: var(--seal);
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .coupon-title {
+    font-family: var(--display); font-style: italic;
+    font-weight: 500; font-size: 19px;
+    color: var(--ink); line-height: 1.05;
+    margin-bottom: 4px;
+  }
+  .coupon-meta {
+    font-family: var(--type); font-size: 9.5px;
+    color: var(--sepia-deep); letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .coupon-seal {
+    width: 56px; height: 56px;
+    background: radial-gradient(circle at 30% 30%, var(--seal-bright), var(--seal) 60%, #6b1f1f);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    color: var(--cream-light); flex-shrink: 0;
+    font-family: var(--display); font-style: italic; font-weight: 700;
+    font-size: 11px; text-align: center;
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.3), 0 2px 8px rgba(139,44,44,0.3);
+    transform: rotate(-7deg);
+    line-height: 1;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .coupon-seal small { font-family: var(--type); font-size: 7px; letter-spacing: 0.2em; opacity: 0.85; display: block; margin-top: 2px; font-style: normal; font-weight: 400; }
+  .coupon-tear {
+    margin-top: 10px; padding-top: 10px;
+    border-top: 1px dashed var(--sepia);
+    font-family: var(--type); font-size: 9px;
+    color: var(--sepia-deep); letter-spacing: 0.16em;
+    text-transform: uppercase;
+    display: flex; justify-content: space-between;
+  }
+  .coupon-close {
+    position: absolute; top: 6px; right: 8px;
+    color: var(--sepia); font-family: var(--type); font-size: 12px;
+    width: 22px; height: 22px;
+    line-height: 1;
+  }
+
+  /* favor indicator on pass */
+  .pass-favors {
+    margin-top: 10px;
+    padding: 8px 10px;
+    background: rgba(232,200,120,0.1);
+    border: 1px solid rgba(232,200,120,0.25);
+    border-radius: 6px;
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: var(--type); font-size: 9px;
+    color: var(--brass); letter-spacing: 0.2em;
+    text-transform: uppercase;
+    position: relative;
+    overflow: hidden;
+  }
+  .pass-favors b {
+    font-family: var(--display); font-style: italic; font-weight: 600;
+    font-size: 13px; letter-spacing: 0; text-transform: none;
+    color: var(--brass-bright);
+  }
+  .pass-favors.bump b { animation: bumpUp 0.7s ease; }
+  @keyframes bumpUp {
+    0%   { transform: scale(1); }
+    40%  { transform: scale(1.4); color: var(--seal-bright); }
+    100% { transform: scale(1); }
+  }
+
   /* ============ STAMP / CHECK-IN ANIMATION ============ */
   .stamp-overlay {
     position: absolute; inset: 0;
@@ -1102,7 +1273,7 @@
   /* metric tiles */
   .sp-metrics {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
     gap: 1px;
     background: rgba(15,40,71,0.15);
     border: 1.5px solid var(--ocean);
@@ -1336,6 +1507,21 @@
     </div>
   </header>
 
+  <!-- concept switcher -->
+  <nav class="concept-nav">
+    <span class="concept-nav-label">Concepts for Run Local</span>
+    <a href="index.html" class="concept-link active">
+      <span class="concept-num">01</span>
+      <span class="concept-name">Riviera Run Investigation</span>
+      <span class="concept-tag">Mystery hunt · pre-race engagement</span>
+    </a>
+    <a href="cheer.html" class="concept-link">
+      <span class="concept-num">02</span>
+      <span class="concept-name">Cheer Card</span>
+      <span class="concept-tag">Spectator activation · race day</span>
+    </a>
+  </nav>
+
   <!-- ============ STAGE ============ -->
   <main class="stage">
 
@@ -1564,6 +1750,25 @@
             </div>
           </div>
 
+          <!-- bureau favor coupon -->
+          <div class="coupon-overlay" id="coupon">
+            <div class="coupon">
+              <button class="coupon-close" id="couponClose" aria-label="Dismiss">×</button>
+              <div class="coupon-row">
+                <div>
+                  <div class="coupon-eyebrow">Bureau favor #1 · Mission Roasters</div>
+                  <div class="coupon-title">Riviera Run blend, on the house.</div>
+                  <div class="coupon-meta">$4 credit · Now → race weekend</div>
+                </div>
+                <div class="coupon-seal">Bureau<small>· Favor ·</small>1927</div>
+              </div>
+              <div class="coupon-tear">
+                <span>Saved to wallet</span>
+                <span>No. 1927-001</span>
+              </div>
+            </div>
+          </div>
+
         </div><!-- /.screen -->
       </div><!-- /.iphone -->
 
@@ -1622,6 +1827,10 @@
               Sponsor scan ID<br>
               <b>SARA-1927</b>
             </div>
+          </div>
+          <div class="pass-favors" id="passFavors">
+            <span>Bureau favors in wallet</span>
+            <b id="favorCount">0</b>
           </div>
         </div>
       </div>
@@ -1785,6 +1994,11 @@
         <small>Chapter advance rate</small>
         <b>91%</b>
         <div class="sp-metric-trend flat">Industry: 24%</div>
+      </div>
+      <div class="sp-metric" style="background: linear-gradient(135deg, var(--paper-white), #fff5e8); border-left: 3px solid var(--sunset);">
+        <small style="color:var(--sunset);">Bureau favors redeemed</small>
+        <b>412</b>
+        <div class="sp-metric-trend">$1,648 in-store revenue</div>
       </div>
     </div>
 
@@ -2058,10 +2272,26 @@
         setTimeout(() => showNotif('Chapter 2 unlocked · Sara\'s notebook reveals her mentor.'), 600);
       }, 1300);
       setTimeout(() => stampOverlay.classList.remove('active'), 2400);
+      // Bureau favor coupon slides in after stamp clears
+      setTimeout(() => {
+        const coupon = document.getElementById('coupon');
+        const favors = document.getElementById('passFavors');
+        const favorCount = document.getElementById('favorCount');
+        if (coupon) coupon.classList.add('show');
+        if (favors) {
+          favorCount.textContent = parseInt(favorCount.textContent || '0') + 1;
+          favors.classList.add('bump');
+          setTimeout(() => favors.classList.remove('bump'), 800);
+        }
+      }, 2600);
     }, 200);
   }
 
   document.getElementById('checkinBtn').addEventListener('click', doCheckin);
+  // dismiss coupon
+  document.getElementById('couponClose').addEventListener('click', () => {
+    document.getElementById('coupon').classList.remove('show');
+  });
   document.getElementById('finaleBtn').addEventListener('click', () => {
     document.getElementById('stampInner').innerHTML = 'Case<br>solved<small>The maritime mile</small>';
     stampOverlay.classList.add('active');
