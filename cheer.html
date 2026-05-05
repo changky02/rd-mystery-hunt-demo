@@ -758,6 +758,207 @@
     margin-top: 2px; display: block;
   }
 
+  /* ============ SCREEN: TRACK ============ */
+  .scr-track {
+    background:
+      radial-gradient(circle at 70% 0%, var(--soft-pink) 0%, transparent 60%),
+      linear-gradient(180deg, var(--paper) 0%, #fdebd5 100%);
+    padding: 56px 0 18px;
+    color: var(--slate);
+    display: flex; flex-direction: column;
+  }
+  .track-head {
+    padding: 0 22px 16px;
+    border-bottom: 1px solid #e6dfd0;
+  }
+  .track-runner {
+    display: flex; align-items: center; gap: 12px;
+    margin-bottom: 4px;
+  }
+  .track-av {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+    color: white; font-family: var(--display); font-weight: 700;
+    font-size: 17px;
+    display: grid; place-items: center;
+    box-shadow: 0 4px 12px rgba(255,107,74,0.25);
+  }
+  .track-runner-text {
+    font-family: var(--display);
+  }
+  .track-runner-text b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 16px; color: var(--ocean);
+    line-height: 1.1; display: block;
+    letter-spacing: -0.01em;
+  }
+  .track-runner-text small {
+    font-family: var(--type); font-size: 9.5px;
+    color: var(--slate-mute); letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .track-status {
+    font-family: var(--display); font-size: 13px;
+    color: var(--slate-soft);
+    margin-top: 6px;
+  }
+  .track-status b { color: var(--coral-deep); font-weight: 700; }
+
+  .track-map-wrap {
+    position: relative;
+    background:
+      radial-gradient(ellipse at 80% 30%, rgba(126,142,255,0.12), transparent 60%),
+      linear-gradient(165deg, #f5f0e0 0%, #e8e0c8 100%);
+    flex: 1;
+    overflow: hidden;
+    min-height: 260px;
+  }
+  .track-map-wrap svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .runner-dot {
+    position: absolute;
+    width: 22px; height: 22px;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    pointer-events: none;
+  }
+  .runner-dot::before {
+    content: ''; position: absolute; inset: 0;
+    border-radius: 50%;
+    background: var(--coral);
+    box-shadow: 0 0 0 4px white, 0 4px 10px rgba(255,107,74,0.5);
+  }
+  .runner-dot::after {
+    content: ''; position: absolute; inset: -4px;
+    border-radius: 50%;
+    background: var(--coral);
+    opacity: 0.4;
+    animation: dotPulse 1.6s ease-out infinite;
+  }
+  @keyframes dotPulse {
+    0%   { transform: scale(1); opacity: 0.45; }
+    100% { transform: scale(2.2); opacity: 0; }
+  }
+  .zone-pin {
+    position: absolute;
+    transform: translate(-50%, -100%);
+    pointer-events: none;
+  }
+  .zone-pin-dot {
+    width: 22px; height: 22px;
+    border-radius: 50% 50% 50% 0;
+    background: linear-gradient(145deg, var(--ocean), var(--ocean-soft));
+    transform: rotate(-45deg);
+    box-shadow: 0 4px 8px rgba(15,40,71,0.3);
+    border: 2px solid white;
+  }
+  .zone-pin-dot.passed { background: linear-gradient(145deg, var(--slate-mute), #6b7785); opacity: 0.5; }
+  .zone-pin-dot.next { background: linear-gradient(145deg, var(--coral), var(--coral-deep)); }
+  .zone-pin-label {
+    position: absolute; left: 16px; top: -6px;
+    font-family: var(--display); font-weight: 700;
+    font-size: 11px; color: var(--ocean);
+    background: white;
+    padding: 2px 7px; border-radius: 999px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    white-space: nowrap;
+    letter-spacing: -0.005em;
+  }
+  .zone-pin.next .zone-pin-label {
+    background: var(--coral); color: white;
+  }
+
+  .track-arrival {
+    background: white;
+    margin: 14px 16px 0;
+    border-radius: 14px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--coral);
+    box-shadow: 0 4px 14px rgba(255,107,74,0.12);
+    display: grid; grid-template-columns: 1fr auto;
+    align-items: center; gap: 14px;
+    position: relative;
+  }
+  .track-arrival small {
+    font-family: var(--type); font-size: 9px;
+    letter-spacing: 0.22em; color: var(--coral);
+    text-transform: uppercase;
+    display: block; margin-bottom: 4px;
+    font-weight: 700;
+  }
+  .track-arrival b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 16px; color: var(--ocean);
+    line-height: 1.1;
+    letter-spacing: -0.01em;
+    display: block;
+  }
+  .track-arrival span {
+    font-family: var(--display); font-size: 12px;
+    color: var(--slate-mute); margin-top: 2px;
+    display: block;
+  }
+  .track-countdown {
+    font-family: var(--display); font-weight: 700;
+    font-size: 32px; color: var(--coral-deep);
+    line-height: 1;
+    letter-spacing: -0.03em;
+    text-align: center;
+  }
+  .track-countdown small {
+    font-family: var(--type); font-size: 9px;
+    color: var(--slate-mute); letter-spacing: 0.2em;
+    text-transform: uppercase; font-weight: 400;
+    display: block; margin-top: 4px;
+  }
+
+  .track-stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #e6dfd0;
+    border: 1px solid #e6dfd0;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 12px 16px 0;
+  }
+  .track-stat {
+    background: white;
+    padding: 12px 10px;
+    text-align: center;
+  }
+  .track-stat small {
+    font-family: var(--type); font-size: 8.5px;
+    color: var(--slate-mute); letter-spacing: 0.2em;
+    text-transform: uppercase; display: block; margin-bottom: 4px;
+  }
+  .track-stat b {
+    font-family: var(--display); font-weight: 700;
+    font-size: 17px; color: var(--ocean);
+    letter-spacing: -0.015em;
+    display: block;
+  }
+
+  .track-actions {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin: 12px 16px 0;
+  }
+  .track-actions button {
+    padding: 12px;
+    border-radius: 999px;
+    font-family: var(--display); font-weight: 600;
+    font-size: 13px;
+    transition: all 0.3s;
+  }
+  .track-actions .primary {
+    background: linear-gradient(135deg, var(--coral), var(--coral-deep));
+    color: white;
+    box-shadow: 0 6px 14px rgba(255,107,74,0.3);
+  }
+  .track-actions .secondary {
+    background: white; color: var(--ocean);
+    border: 1.5px solid var(--ocean);
+  }
+
   /* ============ SCREEN: REEL ============ */
   .scr-reel {
     background:
@@ -1229,7 +1430,7 @@
   <header class="topbar">
     <div class="brand">
       <div class="brand-seal">C</div>
-      <span>Run Local · Cheer Card</span>
+      <span>Crew by Run Local · <b style="color:var(--cream-light); font-weight:600; letter-spacing:0;">Cheer Card</b></span>
     </div>
     <div class="topbar-center">
       Concept demo · prepared for <b>Race Director Conversation</b> · May 2026
@@ -1372,6 +1573,97 @@
             <div class="sent-share">
               <button>Tell Dad</button>
               <button>Add another</button>
+            </div>
+          </div>
+
+          <!-- TRACK -->
+          <div class="screen-stage scr-track" data-stage="track">
+            <div class="track-head">
+              <div class="track-runner">
+                <div class="track-av">A</div>
+                <div class="track-runner-text">
+                  <b>Tracking Alice Chen</b>
+                  <small>Bib 1247 · SB Half '26</small>
+                </div>
+              </div>
+              <div class="track-status">On pace · last seen at <b>Mile 7.2</b> · 8:42/mi</div>
+            </div>
+
+            <div class="track-map-wrap">
+              <svg viewBox="0 0 360 320" preserveAspectRatio="none">
+                <!-- soft course backdrop -->
+                <path d="M 0 200 Q 60 220 120 210 Q 180 195 220 220 Q 260 245 300 215 Q 330 195 360 220" stroke="rgba(15,40,71,0.12)" stroke-width="22" fill="none" stroke-linecap="round"/>
+                <!-- main race path -->
+                <path id="coursePath" d="M 0 200 Q 60 220 120 210 Q 180 195 220 220 Q 260 245 300 215 Q 330 195 360 220" stroke="var(--ocean)" stroke-width="3" fill="none" stroke-linecap="round" stroke-dasharray="0"/>
+                <!-- progress overlay (mile 0 to 7.2 of 13.1 ≈ 55%) -->
+                <path d="M 0 200 Q 60 220 120 210 Q 165 198 195 211" stroke="var(--coral)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+                <!-- start + finish flags -->
+                <g>
+                  <circle cx="0" cy="200" r="5" fill="var(--ocean)"/>
+                  <text x="6" y="192" font-family="Special Elite" font-size="8" fill="var(--ocean)" letter-spacing="1.5">START</text>
+                </g>
+                <g>
+                  <circle cx="360" cy="220" r="5" fill="var(--ocean)"/>
+                  <text x="332" y="245" font-family="Special Elite" font-size="8" fill="var(--ocean)" letter-spacing="1.5">FINISH</text>
+                </g>
+                <!-- compass -->
+                <g transform="translate(330,40)" opacity="0.4">
+                  <circle r="14" fill="none" stroke="var(--slate-soft)" stroke-width="0.6"/>
+                  <path d="M0 -14 L 3 0 L 0 14 L -3 0 Z" fill="var(--coral)"/>
+                  <text y="-18" text-anchor="middle" font-family="Special Elite" font-size="7" fill="var(--slate-soft)">N</text>
+                </g>
+                <!-- city label -->
+                <text x="180" y="100" text-anchor="middle" font-family="Special Elite" font-size="9" fill="var(--slate-soft)" letter-spacing="2.5" opacity="0.45">SANTA BARBARA</text>
+                <text x="180" y="285" text-anchor="middle" font-family="Bricolage Grotesque" font-style="italic" font-weight="500" font-size="9" fill="var(--ocean-soft)" opacity="0.5">Pacific Ocean</text>
+              </svg>
+
+              <!-- zone pins (pixel positions over 360x320 viewBox) -->
+              <div class="zone-pin" style="left:18%;top:62%">
+                <div class="zone-pin-dot passed"></div>
+                <div class="zone-pin-label" style="color:var(--slate-mute)">Mi 6 ✓</div>
+              </div>
+              <div class="zone-pin next" style="left:54%;top:67%">
+                <div class="zone-pin-dot next"></div>
+                <div class="zone-pin-label">Mi 9 · HOKA</div>
+              </div>
+              <div class="zone-pin" style="left:78%;top:73%">
+                <div class="zone-pin-dot"></div>
+                <div class="zone-pin-label">Mi 11</div>
+              </div>
+
+              <!-- runner dot -->
+              <div class="runner-dot" style="left:42%;top:66%"></div>
+            </div>
+
+            <div class="track-arrival">
+              <div>
+                <small>Next cheer · Powered by HOKA</small>
+                <b>Mile 9 · Hilltop Cheer Zone</b>
+                <span>Karen's card queued for delivery</span>
+              </div>
+              <div class="track-countdown">
+                12<small>min</small>
+              </div>
+            </div>
+
+            <div class="track-stats">
+              <div class="track-stat">
+                <small>Pace</small>
+                <b>8:42</b>
+              </div>
+              <div class="track-stat">
+                <small>Mile</small>
+                <b>7.2</b>
+              </div>
+              <div class="track-stat">
+                <small>Predicted finish</small>
+                <b>9:48</b>
+              </div>
+            </div>
+
+            <div class="track-actions">
+              <button class="primary" data-go="compose">Send another card</button>
+              <button class="secondary">Alert at mile 9 ✓</button>
             </div>
           </div>
 
@@ -1521,15 +1813,22 @@
               <div class="step-desc">Card locked in for Mile 9. Confirmation. Optional: nudge another supporter.</div>
             </div>
           </button>
-          <button class="step" data-action="raceday" data-go="runner" data-step="3">
+          <button class="step" data-action="raceday" data-go="track" data-step="3">
             <span class="step-num"><span>4</span></span>
             <div>
-              <div class="step-label">Race day · runner POV</div>
+              <div class="step-label">Race morning · track Alice</div>
+              <div class="step-desc">Live position on the course. Cheer-zone arrival countdown. The utility hook supporters open the app for.</div>
+            </div>
+          </button>
+          <button class="step" data-go="runner" data-step="4">
+            <span class="step-num"><span>5</span></span>
+            <div>
+              <div class="step-label">At the cheer zone · runner POV</div>
               <div class="step-desc">Wallet pass push 0.4 mi out. Announcer reads card aloud. Friends' phones light up.</div>
             </div>
           </button>
-          <button class="step" data-action="after" data-go="reel" data-step="4">
-            <span class="step-num"><span>5</span></span>
+          <button class="step" data-action="after" data-go="reel" data-step="5">
+            <span class="step-num"><span>6</span></span>
             <div>
               <div class="step-label">After · the reel</div>
               <div class="step-desc">11 cards from 8 supporters compiled. Shareable artifact. Sponsor watermark.</div>
@@ -1788,11 +2087,11 @@
       showStage('landing');
       activateStep(0);
     } else if (p === 'raceday') {
-      showStage('runner');
+      showStage('track');
       activateStep(3);
     } else if (p === 'after') {
       showStage('reel');
-      activateStep(4);
+      activateStep(5);
     }
   }
   phaseBtns.forEach(b => b.addEventListener('click', () => setPhase(b.dataset.phase)));
