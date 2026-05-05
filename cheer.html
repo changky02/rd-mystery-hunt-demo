@@ -812,87 +812,47 @@
     box-shadow: none;
   }
 
-  /* ============ JUMBOTRON MOCKUP (below phone) ============ */
-  .jumbotron-wrap {
+  /* ============ DELIVERY SURFACES (no hardware) ============ */
+  .delivery-wrap {
     width: 100%;
     max-width: 480px;
   }
-  .jumbotron-label {
+  .delivery-label {
     font-family: var(--type); font-size: 10px;
     color: var(--coral); letter-spacing: 0.3em;
     text-transform: uppercase;
-    text-align: center; margin-bottom: 12px;
+    text-align: center; margin-bottom: 14px;
   }
-  .jumbotron {
-    aspect-ratio: 16 / 9;
-    background: var(--ink-deep);
-    border-radius: 14px;
-    padding: 8px;
-    box-shadow:
-      0 30px 60px rgba(0,0,0,0.6),
-      0 0 0 2px #2a221a,
-      inset 0 0 30px rgba(0,0,0,0.6);
-    position: relative;
+  .delivery-grid {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
   }
-  .jumbotron-inner {
-    width: 100%; height: 100%;
-    border-radius: 8px;
-    background:
-      radial-gradient(ellipse at 50% 30%, var(--coral) 0%, var(--coral-deep) 50%, var(--ocean) 100%);
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    align-items: center;
-    padding: 14px 18px;
-    gap: 14px;
-    position: relative;
-    overflow: hidden;
+  .delivery-tile {
+    background: linear-gradient(180deg, rgba(20,16,12,0.6), rgba(20,16,12,0.3));
+    border: 1px solid rgba(255,107,74,0.18);
+    border-radius: 10px;
+    padding: 14px 12px;
+    text-align: left;
+    transition: border-color 0.3s;
   }
-  .jumbotron-inner::before {
-    content: ''; position: absolute; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='200'%3E%3Cfilter id='nn'%3E%3CfeTurbulence baseFrequency='2.5' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23nn)'/%3E%3C/svg%3E");
-    opacity: 0.7; pointer-events: none;
+  .delivery-tile:hover { border-color: rgba(255,107,74,0.45); }
+  .delivery-ico {
+    font-size: 22px; line-height: 1;
+    margin-bottom: 8px;
   }
-  .jumbotron-card {
-    transform: rotate(-3deg);
-    z-index: 2;
-  }
-  .jumbotron-card .poly { width: 110px; padding: 5px 5px 14px; }
-  .jumbotron-card .poly-msg { font-size: 12px; margin-top: 4px; }
-  .jumbotron-text {
-    color: white; z-index: 2;
-    font-family: var(--display);
-  }
-  .jumbotron-text small {
-    font-family: var(--type); font-size: 8.5px;
-    letter-spacing: 0.25em; color: var(--lemon);
-    text-transform: uppercase; display: block;
-  }
-  .jumbotron-text b {
+  .delivery-tile b {
     font-family: var(--display); font-weight: 700;
-    font-size: 22px; color: white;
-    line-height: 1.0; margin: 4px 0;
-    letter-spacing: -0.02em;
+    font-size: 13px; color: var(--cream-light);
+    display: block; margin-bottom: 4px;
+    letter-spacing: -0.005em;
+  }
+  .delivery-tile small {
+    font-family: var(--display); font-size: 11px;
+    color: var(--sepia); line-height: 1.4;
     display: block;
   }
-  .jumbotron-text p {
-    font-family: var(--hand); font-size: 18px;
-    color: var(--lemon);
-    line-height: 1.05;
-  }
-  .jumbotron-sponsor {
-    position: absolute; bottom: 8px; left: 12px; right: 12px;
-    display: flex; justify-content: space-between; align-items: center;
-    z-index: 2;
-    font-family: var(--type); font-size: 7.5px;
-    letter-spacing: 0.25em; color: rgba(255,255,255,0.55);
-    text-transform: uppercase;
-    border-top: 1px solid rgba(255,255,255,0.15);
-    padding-top: 6px;
-  }
-  .jumbotron-sponsor b {
-    font-family: var(--brand); font-style: italic; font-weight: 600;
-    color: white; font-size: 13px;
-    letter-spacing: 0; text-transform: none;
+  @media (max-width: 1024px) {
+    .delivery-grid { grid-template-columns: 1fr; }
   }
 
   /* ============ CONTROLS COL ============ */
@@ -1492,26 +1452,24 @@
         </div><!-- /.screen -->
       </div><!-- /.iphone -->
 
-      <!-- JUMBOTRON MOCKUP -->
-      <div class="jumbotron-wrap">
-        <div class="jumbotron-label">Mile 9 cheer-zone screen · Powered by HOKA</div>
-        <div class="jumbotron">
-          <div class="jumbotron-inner">
-            <div class="jumbotron-card">
-              <div class="poly">
-                <div class="poly-photo ph-mom"></div>
-                <div class="poly-msg">GO MOM!!</div>
-              </div>
-            </div>
-            <div class="jumbotron-text">
-              <small>Now cheering</small>
-              <b>ALICE CHEN<br>BIB 1247</b>
-              <p>"Go Mom!!" — from Karen</p>
-            </div>
-            <div class="jumbotron-sponsor">
-              <span>Mile 9 · Hilltop</span>
-              <b>HOKA</b>
-            </div>
+      <!-- DELIVERY SURFACES (no hardware required) -->
+      <div class="delivery-wrap">
+        <div class="delivery-label">Three delivery surfaces · No screens required</div>
+        <div class="delivery-grid">
+          <div class="delivery-tile">
+            <div class="delivery-ico">📱</div>
+            <b>Runner's phone</b>
+            <small>Wallet pass push fires 0.4 mi out from cheer zone. Lock-screen banner. Apple Watch tap.</small>
+          </div>
+          <div class="delivery-tile">
+            <div class="delivery-ico">🎙️</div>
+            <b>PA announcer</b>
+            <small>Cards queue on a tablet at the cheer-zone announcer's stand. They read it aloud with sponsor mention.</small>
+          </div>
+          <div class="delivery-tile">
+            <div class="delivery-ico">🤝</div>
+            <b>Supporter phones</b>
+            <small>Friends already at the cheer zone get the same push. They hold up phones — de facto crowd display.</small>
           </div>
         </div>
       </div>
@@ -1525,7 +1483,10 @@
         <div class="ctrl-eyebrow">Concept · 60 seconds</div>
         <h2 class="ctrl-h">Make spectatorship <b>visible.</b> Make support <b>portable.</b></h2>
         <p class="ctrl-p">Friends and family compose a card — photo, message, mile — in two minutes from anywhere. The card lives in three places.</p>
-        <p class="ctrl-p">On the runner's phone as a wallet pass push when they approach the cheer zone. On the sponsor's physical screen at the cheer zone for the crowd. In the post-race reel as a memory artifact.</p>
+        <p class="ctrl-p">On the runner's phone as a wallet pass push when they approach the cheer zone. On the announcer's tablet — read aloud at the cheer zone with sponsor mention. On supporter phones already at the zone, held up as a crowd display. In the post-race reel as a shareable memory artifact.</p>
+        <p class="ctrl-p" style="font-family:var(--type); font-size:11px; color:var(--coral); letter-spacing:0.1em; text-transform:uppercase; padding-top:10px; border-top:1px solid rgba(255,107,74,0.18); margin-top:14px;">
+          No screens. No new hardware. No timing-co dependency.
+        </p>
       </div>
 
       <div class="facts">
@@ -1564,7 +1525,7 @@
             <span class="step-num"><span>4</span></span>
             <div>
               <div class="step-label">Race day · runner POV</div>
-              <div class="step-desc">Wallet pass surfaces 0.4 mi out. Card visible at sponsor screen. Crowd cheers.</div>
+              <div class="step-desc">Wallet pass push 0.4 mi out. Announcer reads card aloud. Friends' phones light up.</div>
             </div>
           </button>
           <button class="step" data-action="after" data-go="reel" data-step="4">
@@ -1623,19 +1584,19 @@
       <div>
         <div class="ck-tagline">Cheer zone activation · Race day live</div>
         <h1 class="ck-headline">Your cheer zone moved <em>3,200 hearts</em> in four hours.</h1>
-        <p class="ck-headline-sub">3,200 cards displayed on your screen. 2,100 social shares with your watermark. 14,400 brand impressions across the cheer-zone perimeter and post-race reel downloads.</p>
+        <p class="ck-headline-sub">3,200 cards delivered to runners and crowd. 2,100 social shares with your watermark. 14,400 brand impressions across wallet pass surfaces, announcer mentions, and post-race reel downloads.</p>
       </div>
       <div class="ck-hero-r">
         <small>Reporting period</small>
         <b>Sun May 17 · 6:30 AM → 10:30 AM</b>
-        <small style="margin-top:8px">Cheer-zone screen uptime</small>
+        <small style="margin-top:8px">Delivery uptime</small>
         <b style="color:var(--coral)">99.4%</b>
       </div>
     </div>
 
     <div class="ck-metrics">
       <div class="ck-metric">
-        <small>Cards displayed</small>
+        <small>Cards delivered</small>
         <b>3,247</b>
         <div class="ck-metric-trend">▲ 21% above forecast</div>
       </div>
@@ -1660,7 +1621,7 @@
       <div class="ck-card">
         <div class="ck-card-h">
           <b>Live cheer wall</b>
-          <small>Sample of cards displayed today</small>
+          <small>Sample of cards delivered today</small>
         </div>
         <div class="ck-showcase">
           <div class="poly"><div class="poly-photo ph-mom"></div><div class="poly-msg">GO MOM!!</div></div>
@@ -1677,7 +1638,7 @@
       <div class="ck-roi">
         <small>Estimated reach</small>
         <b>14,400</b>
-        <p>Cheer-zone screen impressions, ambient crowd exposure, social shares with HOKA watermark, and post-race reel downloads viewed by friend networks.</p>
+        <p>Wallet pass push impressions on runners' lock screens, PA announcer mentions to crowd, supporter-phone displays at the cheer zone, social shares with HOKA watermark, and post-race reel downloads viewed by friend networks.</p>
         <div class="ck-roi-sub">
           <b>Bottom line:</b> measurable ROI on a $24,000 title-tier sponsorship. The cheer zone is now an <em style="font-style:italic; opacity:0.95">activation surface</em>, not a logo placement.
         </div>
